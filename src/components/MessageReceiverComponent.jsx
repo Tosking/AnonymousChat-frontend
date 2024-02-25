@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import * as signalR from '@microsoft/signalr';
+import CreateUser from './CreateUser';
+import CreateChatroom from './CreateChatroom';
+import SendMessage from './SendMessage';
 
 const ChatComponent = () => {
     const [connection, setConnection] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [messageInput, setMessageInput] = useState('');
-    const [chatRoomName, setChatRoomName] = useState(null);
+    const [username, setUsername] = useState('');
+    const [chatroom, setChatroom] = useState('');
 
     useEffect(() => {
+        setUsername(localStorage.getItem('name'))
+        setChatroom(localStorage.getItem('chatroom'))
+
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl('http://localhost:5075/chatHub')
             .withAutomaticReconnect()
@@ -23,27 +29,21 @@ const ChatComponent = () => {
             setMessages(prevMessages => [...prevMessages, { user, message }]);
         });
 
+        newConnection.on('CreateUser', (name, userId, token) => {
+            localStorage.setItem('name', name)
+            localStorage.setItem('userId', userId)
+            localStorage.setItem('token', token)
+            setUsername(name)
+            console.log(name, userId, token);
+        });
+
+        newConnection.on('CreateChatroom', (name, id) => {
+            localStorage.setItem('chatroom', JSON.stringify({name : name, id : id}))
+            setChatroom(name)
+        })
+
     }, []);
-
-
-    const sendMessage = async () => {
-        try {
-            if(!messageInput || !chatRoom) return
-            await connection.send('CreateChatroom', chatRoomName);
-            setChatRoomName('');
-        } catch (error) {
-            console.error('Error creating chatroom:', error);
-        }
-    };
-
-    const createChatroom = async () => {
-        try {
-            await connection.send('SendMessage', 'User', messageInput);
-            setMessageInput('');
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-    };
+    
 
     return (
         <div>
@@ -52,14 +52,11 @@ const ChatComponent = () => {
                     <li key={index}>{msg.user}: {msg.message}</li>
                 ))}
             </ul>
-            <ul>
-                <input type="text" value={messageInput} onChange={e => setMessageInput(e.target.value)} placeholder='Message'/>
-                <button onClick={sendMessage}>Send</button>
-            </ul>
-            <ul>
-                <input type="text" value={chatRoomName} onChange={e => setChatRoomName(e.target.value)} placeholder='Chatroom name'/>
-                <button onClick={setChatRoomName}>Create</button>
-            </ul>
+            <SendMessage connection={connection}></SendMessage>
+            {chatroom && <ul>chatroom</ul>}
+            <CreateChatroom connection={connection}></CreateChatroom>
+            {username && <b>Name: {localStorage.getItem('name')}</b>}
+            {!username && <CreateUser connection={connection}></CreateUser>}
         </div>
     );
 };
