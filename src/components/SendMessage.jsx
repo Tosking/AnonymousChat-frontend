@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { ConnectionContext } from './ConnectionContext';
 
-function SendMessage(props) {
-    let connection;
+function SendMessage() {
     const [messageInput, setMessageInput] = useState('');
 
-    useEffect(() => {
-        connection = props.connection
-    })
+    const connection = useContext(ConnectionContext)
     const sendMessage = async () => {
         try {
             const chatroom = JSON.parse(localStorage.getItem('chatroom'))
-            if(!messageInput || chatroom) return
+            if(!messageInput || !chatroom) return
             await connection.send('SendMessage', localStorage.getItem('token'), chatroom.id, messageInput);
             setMessageInput('');
         } catch (error) {

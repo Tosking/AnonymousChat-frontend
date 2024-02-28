@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { ConnectionContext } from './ConnectionContext';
 
-function CreateUser(props) {
-    let connection;
+function CreateUser() {
     const [username, setUsername] = useState('');
 
-    useEffect(() => {
-        connection = props.connection
-    })
+    const connection = useContext(ConnectionContext)
+
     const createUser = async () => {
         try {
             await connection.send('CreateUser', username);

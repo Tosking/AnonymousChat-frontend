@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { ConnectionContext } from './ConnectionContext';
 
-function CreateChatroom(props) {
-    let connection;
+function CreateChatroom() {
     const [chatRoomName, setChatRoomName] = useState(null);
 
-    useEffect(() => {
-        connection = props.connection
-    })
+    const connection = useContext(ConnectionContext)
 
     const createChatroom = async () => {
         try {
