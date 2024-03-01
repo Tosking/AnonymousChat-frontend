@@ -45,10 +45,14 @@ const ChatComponent = () => {
 
     return (
         <div>
-            <ul>
-                {messages.map((msg, index) => (
-                    <li key={index}>{msg.user}: {msg.message}</li>
-                ))}
+            <ul className='messages-block'>
+                <div className='messages-wrapper'>
+                    {messages.map((msg, index) => 
+                        {return msg.user !== localStorage.getItem('userId') ? (
+                            <div className='message-foreign' key={index}>{msg.user}: {msg.message}</div>
+                        ) : <div className='message-user' key={index}>{msg.user}: {msg.message}</div>}
+                    )}
+                </div>
             </ul>
             <SendMessage></SendMessage>
             {chatroom && <ul>{chatroom}</ul>}

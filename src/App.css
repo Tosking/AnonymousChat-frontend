@@ -24,6 +24,28 @@
   color: white;
 }
 
+.message-foreign {
+  padding: 10px 5px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background-color: #82adf7;
+}
+
+.message-user {
+  padding: 10px 5px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background-color: #82f792;
+}
+
+.messages-block {
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
 .App-link {
   color: #61dafb;
 }
