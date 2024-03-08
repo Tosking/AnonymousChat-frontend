@@ -36,6 +36,10 @@ const ChatComponent = () => {
             setChatroom(name)
         })
 
+        connection.on('GetMessages', (messages) => {
+            console.log(messages)
+        })
+
         connection.on('Error', (err) => {
             alert(err)
         })

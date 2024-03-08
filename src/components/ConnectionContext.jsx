@@ -16,6 +16,9 @@ export const ConnectionProvider = ({ children }) => {
             .then(() => {
                 console.log('Connection established.')
                 newConnection.send("ConnectUser", localStorage.getItem('token'), JSON.parse(localStorage.getItem('chatroom')).id);
+                if(localStorage.getItem('chatroom')){
+                    newConnection.send("GetMessages", JSON.parse(localStorage.getItem('chatroom')).id)
+                }
             })
             .catch(error => console.error('Error establishing connection:', error));
     }, [])
