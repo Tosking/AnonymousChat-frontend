@@ -34,10 +34,15 @@ const ChatComponent = () => {
             console.log(name, id)
             localStorage.setItem('chatroom', JSON.stringify({name : name, id : id}))
             setChatroom(name)
+            connection.send("GetMessages", localStorage.getItem('token'), chatroom)
         })
 
         connection.on('GetMessages', (messages) => {
-            console.log(messages)
+            messages = messages
+            for(const i in messages){
+                setMessages(prevMessages => [...prevMessages, { user: messages[i].userId.toString(), message: messages[i].content }]);
+                console.log(i, messages[i])
+            }
         })
 
         connection.on('Error', (err) => {
