@@ -37,7 +37,19 @@
   margin: 10px 0;
   border-radius: 10px;
   background-color: #82f792;
+}
 
+.chatrooms-list {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 10px;
+  left: 10px;
+}
+
+.chatroom-button {
+  margin-top: 5px;
+  padding: 3px 20px;
 }
 
 .messages-block {

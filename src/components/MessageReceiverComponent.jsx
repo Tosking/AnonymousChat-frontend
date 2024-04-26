@@ -8,6 +8,7 @@ import JoinChatroom from './JoinChatroom';
 const ChatComponent = () => {
 
     const [messages, setMessages] = useState([]);
+    const [chatrooms, setChatrooms] = useState([]);
     const [username, setUsername] = useState('');
     const [chatroom, setChatroom] = useState('');
 
@@ -16,7 +17,7 @@ const ChatComponent = () => {
     useEffect(() => {
         if(!connection) return
         setUsername(localStorage.getItem('name'))
-        setChatroom(localStorage.getItem('chatroom'))
+        setChatroom(JSON.parse(localStorage.getItem('chatroom')).name)
 
         connection.on('ReceiveMessage', (user, message) => {
             setMessages(prevMessages => [...prevMessages, { user, message }]);
@@ -34,15 +35,23 @@ const ChatComponent = () => {
             console.log(name, id)
             localStorage.setItem('chatroom', JSON.stringify({name : name, id : id}))
             setChatroom(name)
-            connection.send("GetMessages", localStorage.getItem('token'), chatroom)
+            connection.send("GetMessages", localStorage.getItem('token'), id)
         })
 
-        connection.on('GetMessages', (messages) => {
-            messages = messages
-            for(const i in messages){
-                setMessages(prevMessages => [...prevMessages, { user: messages[i].userId.toString(), message: messages[i].content }]);
-                console.log(i, messages[i])
+        connection.on('GetMessages', (messagesFromDB) => {
+            for(const i in messagesFromDB){
+                if(!messages.some(u => {
+                    return messagesFromDB[i].Id == u.id
+                })) setMessages(prevMessages => [...prevMessages, { id: messagesFromDB[i].Id, user: messagesFromDB[i].userId.toString(), message: messagesFromDB[i].content }]);
+                console.log(i, messagesFromDB[i])
             }
+        })
+        connection.on('GetChatrooms', (chatroomsFromDb) => {
+            console.log(chatroomsFromDb)
+            for(const i in chatroomsFromDb){
+                setChatrooms(prevChatrooms => [...prevChatrooms, {name: chatroomsFromDb[i].name, id: chatroomsFromDb[i].id}])
+            }
+            console.log(chatrooms)
         })
 
         connection.on('Error', (err) => {
@@ -54,6 +63,9 @@ const ChatComponent = () => {
 
     return (
         <div>
+            <div className='chatrooms-list'>
+                {chatrooms.map(chat => <button className='chatroom-button' onClick={() => connection.send("JoinChatroom", localStorage.getItem('token'), chat.id)}>{chat.name}</button>)}
+            </div>
             <ul className='messages-block'>
                 <div className='messages-wrapper'>
                     {messages.map((msg, index) => 
