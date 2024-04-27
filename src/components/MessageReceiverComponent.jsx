@@ -17,10 +17,11 @@ const ChatComponent = () => {
     useEffect(() => {
         if(!connection) return
         setUsername(localStorage.getItem('name'))
+        if(localStorage.getItem('chatroom') != null)
         setChatroom(JSON.parse(localStorage.getItem('chatroom')).name)
 
-        connection.on('ReceiveMessage', (user, message) => {
-            setMessages(prevMessages => [...prevMessages, { user, message }]);
+        connection.on('ReceiveMessage', (message) => {
+            setMessages(prevMessages => [...prevMessages, { id: message.id, content: message.content, name: message.name }]);
         });
     
         connection.on('CreateUser', (name, userId, token) => {
@@ -32,21 +33,22 @@ const ChatComponent = () => {
         });
     
         connection.on('JoinChatroom', (name, id) => {
+            setMessages([])
             console.log(name, id)
             localStorage.setItem('chatroom', JSON.stringify({name : name, id : id}))
             setChatroom(name)
             connection.send("GetMessages", localStorage.getItem('token'), id)
+            connection.send("GetChatrooms", localStorage.getItem('token'))
         })
 
         connection.on('GetMessages', (messagesFromDB) => {
             for(const i in messagesFromDB){
-                if(!messages.some(u => {
-                    return messagesFromDB[i].Id == u.id
-                })) setMessages(prevMessages => [...prevMessages, { id: messagesFromDB[i].Id, user: messagesFromDB[i].userId.toString(), message: messagesFromDB[i].content }]);
+                setMessages(prevMessages => [...prevMessages, { id: messagesFromDB[i].Id, user: messagesFromDB[i].userId.toString(), message: messagesFromDB[i].content }]);
                 console.log(i, messagesFromDB[i])
             }
         })
         connection.on('GetChatrooms', (chatroomsFromDb) => {
+            setChatrooms([])
             console.log(chatroomsFromDb)
             for(const i in chatroomsFromDb){
                 setChatrooms(prevChatrooms => [...prevChatrooms, {name: chatroomsFromDb[i].name, id: chatroomsFromDb[i].id}])
@@ -70,8 +72,8 @@ const ChatComponent = () => {
                 <div className='messages-wrapper'>
                     {messages.map((msg, index) => 
                         {return msg.user !== localStorage.getItem('userId') ? (
-                            <div className='message-foreign' key={index}>{msg.user}: {msg.message}</div>
-                        ) : <div className='message-user' key={index}>{msg.user}: {msg.message}</div>}
+                            <div className='message-foreign' key={index}>{msg.name}: {msg.content}</div>
+                        ) : <div className='message-user' key={index}>{msg.name}: {msg.content}</div>}
                     )}
                 </div>
             </ul>
