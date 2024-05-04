@@ -21,6 +21,7 @@ const ChatComponent = () => {
         setChatroom(JSON.parse(localStorage.getItem('chatroom')).name)
 
         connection.on('ReceiveMessage', (message) => {
+            console.log(message)
             setMessages(prevMessages => [...prevMessages, { id: message.id, content: message.content, name: message.name }]);
         });
     
@@ -49,11 +50,9 @@ const ChatComponent = () => {
         })
         connection.on('GetChatrooms', (chatroomsFromDb) => {
             setChatrooms([])
-            console.log(chatroomsFromDb)
             for(const i in chatroomsFromDb){
                 setChatrooms(prevChatrooms => [...prevChatrooms, {name: chatroomsFromDb[i].name, id: chatroomsFromDb[i].id}])
             }
-            console.log(chatrooms)
         })
 
         connection.on('Error', (err) => {
@@ -71,9 +70,9 @@ const ChatComponent = () => {
             <ul className='messages-block'>
                 <div className='messages-wrapper'>
                     {messages.map((msg, index) => 
-                        {return msg.user !== localStorage.getItem('userId') ? (
-                            <div className='message-foreign' key={index}>{msg.name}: {msg.content}</div>
-                        ) : <div className='message-user' key={index}>{msg.name}: {msg.content}</div>}
+                        {return msg.id !== localStorage.getItem('userId') ? (
+                            <div className='message message-foreign' key={index}><div className='userid'>{msg.id}</div><div className='nickname'>{msg.name}</div>{msg.content}</div>
+                        ) : <div className='message message-user' key={index}><div className='userid'>{msg.id}</div><div className='nickname'>{msg.name}</div> {msg.content}</div>}
                     )}
                 </div>
             </ul>

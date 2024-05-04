@@ -24,18 +24,32 @@
   color: white;
 }
 
-.message-foreign {
-  padding: 10px 5px;
+.nickname {
+  font-weight: bold;
+  font-size: 16px;
+  text-align: start;
+}
+
+.message {
+  overflow-wrap: break-word;
+  width: 20%;
+  padding: 10px 10px;
   margin: 10px 0;
   border-radius: 10px;
-  background-color: #82adf7;
+  text-align: start;
+}
 
+.message-foreign {
+  align-self: start;
+  background-color: #82adf7;
+}
+
+.userid {
+  font-size: 6px;
 }
 
 .message-user {
-  padding: 10px 5px;
-  margin: 10px 0;
-  border-radius: 10px;
+  align-self: end;
   background-color: #82f792;
 }
 
@@ -54,10 +68,17 @@
 
 .messages-block {
   padding: 0;
-  width: 100%;
+  margin: auto;
+  width: 50%;
   text-align: center;
   display: flex;
   justify-content: center;
+}
+
+.messages-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .App-link {
