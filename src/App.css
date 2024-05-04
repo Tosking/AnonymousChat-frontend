@@ -28,6 +28,9 @@
   font-weight: bold;
   font-size: 16px;
   text-align: start;
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
 }
 
 .message {
@@ -46,6 +49,7 @@
 
 .userid {
   font-size: 8px;
+  text-align: end;
 }
 
 .message-user {

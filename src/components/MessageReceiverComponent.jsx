@@ -71,8 +71,20 @@ const ChatComponent = () => {
                 <div className='messages-wrapper'>
                     {messages.map((msg, index) => 
                         {return msg.id !== localStorage.getItem('userId') ? (
-                            <div className='message message-foreign' key={index}><div className='userid'>{msg.id}</div><div className='nickname'>{msg.name}</div>{msg.content}</div>
-                        ) : <div className='message message-user' key={index}><div className='userid'>{msg.id}</div><div className='nickname'>{msg.name}</div> {msg.content}</div>}
+                            <div className='message message-foreign' key={index}>
+                                <div className='nickname'>
+                                    {msg.name}
+                                    <div className='userid'>{msg.id.slice(-5)}</div>
+                                </div> 
+                                {msg.content}
+                            </div>
+                        ) : <div className='message message-user' key={index}>
+                                <div className='nickname'>
+                                    {msg.name}
+                                    <div className='userid'>{msg.id.slice(-5)}</div>
+                                </div> 
+                                {msg.content}
+                            </div>}
                     )}
                 </div>
             </ul>
